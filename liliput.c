@@ -36,6 +36,17 @@ struct Settings {
   struct row *row;
 } settingsInstance;
 
+
+void saveRow(int curRow, char *line, size_t length) {
+  if (curRow > settingsInstance.numRows)
+    return;
+  // Might have to use realloc
+  settingsInstance.row = malloc(settingsInstance.row, (sizeof(rowInstance)*settingsInstance.numRows + 1));
+
+  settingsInstance.row[curRow].
+
+}
+
 void openFile(char *file) {
     FILE *fp;
     settingsInstance.fileModified = false;
@@ -46,15 +57,26 @@ void openFile(char *file) {
       exit(1);
     }
 
+    //TODO : Add else block where file is created if it doesn't exist
+
     char *line = NULL;
     size_t linecap = 0;
     ssize_t lineLength = 0;
-    while(getline(&line, &linecap, fp) != -1) {
-      printf("%s", line);
+    while((lineLength = getline(&line, &linecap, fp)) != -1) {
+
+      // \n is standard new line
+      // \r is newline on older mac systems
+      // \r\n is new line on some windows versions. Not sure. Just following stack overflow here
+      // I don't need to do this as get Line covers breaking up lines in new line chars
+      // I suspect I cant use getDelim to make this check redundant. But Meh.
+      if(lineLength && (line[lineLength -1] == '\n' || line[lineLength -1] == '\n' || line[lineLength -1] == '\r\n'))
+        line[lineLength--] = '\0';
+      saveRow(settingsInstance.numRows, line, lineLength);
+
     }
 
     free(line);
-    free(fp);
+    fclose(fp);
     settingsInstance.fileModified = true;
 }
 
