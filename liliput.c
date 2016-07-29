@@ -56,7 +56,7 @@ typedef struct hlcolor {
     int r,g,b;
 } hlcolor;
 
-struct editorConfig {
+struct settingsInstance {
     int cx,cy;  /* Cursor x and y position in characters */
     int rowoff;     /* Offset of row displayed. */
     int coloff;     /* Offset of column displayed. */
@@ -72,7 +72,7 @@ struct editorConfig {
     struct editorSyntax *syntax;    /* Current syntax highlight, or NULL. */
 };
 
-static struct editorConfig E;
+static struct settingsInstance E;
 
 enum KEY_ACTION{
         KEY_NULL = 0,       /* NULL */
@@ -1200,7 +1200,7 @@ int editorFileWasModified(void) {
     return E.dirty;
 }
 
-void initEditor(void) {
+void init() {
     E.cx = 0;
     E.cy = 0;
     E.rowoff = 0;
@@ -1225,7 +1225,7 @@ int main(int argc, char **argv) {
         exit(1);
     }
 
-    initEditor();
+    init();
     editorSelectSyntaxHighlight(argv[1]);
     editorOpen(argv[1]);
     enableRawMode(STDIN_FILENO);
